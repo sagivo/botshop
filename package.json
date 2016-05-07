@@ -1,0 +1,43 @@
+{
+  "name": "botshop",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "pm2 deploy package.json production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagivo/botshop.git"
+  },
+  "author": "Gilad Novik <gilad@novik.ca>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sagivo/botshop/issues"
+  },
+  "homepage": "https://github.com/sagivo/botshop#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "request": "^2.72.0",
+    "underscore": "^1.8.3"
+  },
+  "apps": [
+    {
+      "name": "Server",
+      "script": "index.js",
+      "env_production": {
+        "NODE_ENV": "production"
+      }
+    }
+  ],
+  "deploy": {
+    "production": {
+      "user": "ubuntu",
+      "host": "botshop",
+      "ref": "origin/master",
+      "repo": "https://github.com/sagivo/botshop.git",
+      "path": "/home/ubuntu/production",
+      "post-deploy": "npm install && pm2 startOrRestart package.json --env production"
+    }
+  }
+}
