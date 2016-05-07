@@ -14,5 +14,6 @@ app.use('/webhook', (req, res, next)=>{
     }
     next();
 }, require('./webhook.js'));
+app.get('/health', (req, res)=>res.send('ok'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.listen(8080, ()=>console.log('server is up'));
