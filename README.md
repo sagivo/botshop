@@ -7,7 +7,7 @@ Create online shop bot from simple excel sheet
 ```
 cd excel
 npm install
-gul serve
+gulp serve
 cd ..
 npm install
 npm start
