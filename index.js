@@ -15,6 +15,9 @@ app.use((req, res, next)=>{
     if (0) console.log(req.method, req.url, JSON.stringify(req.body, null, 4));
     next();
 });
+app.get('/', (req, res)=>{
+    res.redirect('http://botshop.launchrock.com');
+});
 app.use('/webhook', (req, res, next)=>{
     if (req.query['hub.challenge'])
     {
