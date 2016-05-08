@@ -200,7 +200,7 @@ app.all('/:app_id', (req, res, next)=>{
                         };
                     })}).then(()=>{
                         send({
-                            text: `Total: $${price(user).toFixed(2)}\nAddress: ${user.address}`,
+                            text: `Total: $${price(user).toFixed(2)}\nShipping Address: ${user.address}`,
                             buttons: [{
                                 title: 'Checkout',
                                 url: `${req.protocol}://${req.get('Host')}/webhook/checkout/${user._id}`,
