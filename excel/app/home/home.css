@@ -1,9 +1,8 @@
 /* Page-specific styling */
 
 h1{font-size:24px}
-h3{font-size:18px;margin:0;}
+h3{font-size:18px;margin:5px 0;}
 .hdn{display:none;}
-
 .select-range span {margin-left: 10px;}
 .menu-item {
   border: 1px solid gray;

@@ -30,13 +30,12 @@ $(function(){
 
   $('.select-range button').click(function(){
     $btn = $(this);
-    $btn.css('background-color', 'green').addClass('ok');
-    if ($('.select-range button.ok').length == 1) $('#sync button').removeAttr('disabled');
+    $('#sync button').removeAttr('disabled');
 
     Excel.run(function (ctx) {
       var selectedRange = ctx.workbook.getSelectedRange().load();
       return ctx.sync().then(function() {
-        $btn.next().removeClass('hdn').text(selectedRange.address);
+        $btn.addClass('hdn').next().removeClass('hdn').text('Range: ' + selectedRange.address);
       });
     }).catch(function(error) {
       console.log("Error: " + error);
@@ -45,9 +44,10 @@ $(function(){
   });
 
   $('#sync button').click(function(){
+    $(this).addClass('hdn').next().removeClass('hdn');
     setTimeout(function(){
-      $('#sync button').next().removeClass('hdn');
-    },1000);
+      window.location = 'show.html'
+    }, 2000);
 
   })
 
