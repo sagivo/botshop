@@ -14,5 +14,8 @@
     "./bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "font-awesome": "^4.6.2"
+  }
 }
