@@ -2,13 +2,15 @@
 
 Create online shop bot from simple excel sheet
 
-##install
+##install excel server
 
 ```
 cd excel
-npm install
-gulp serve
-cd ..
-npm install
-npm start
+npm install && gulp serve-static
+```
+
+##install bot server
+
+```
+npm install && npm start
 ```
