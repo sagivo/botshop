@@ -1,11 +1,20 @@
 'use strict';
+const assert = require('assert');
 const path = require('path');
 const express = require('express');
 const body_parser = require('body-parser');
 const app = express();
 
+assert(process.env.APP_TOKEN);
+
+app.set('trust proxy', 1);
+app.set('view engine', 'ejs');
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({extended: true}));
+app.use((req, res, next)=>{
+    console.log(req.method, req.url, req.body);
+    next();
+});
 app.use('/webhook', (req, res, next)=>{
     if (req.query['hub.challenge'])
     {
