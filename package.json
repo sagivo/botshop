@@ -18,7 +18,9 @@
   "homepage": "https://github.com/sagivo/botshop#readme",
   "dependencies": {
     "body-parser": "^1.15.1",
+    "ejs": "^2.4.1",
     "express": "^4.13.4",
+    "fast-csv": "^2.0.0",
     "request": "^2.72.0",
     "then-mongo": "^2.1.0",
     "underscore": "^1.8.3"
@@ -28,7 +30,8 @@
       "name": "Server",
       "script": "index.js",
       "env_production": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "APP_TOKEN": "EAAYZALDkqXb0BAEMycGzdXEGkonSspsTEsol7MZBxZAJUXxZA2V8ZAkPJVhIlkqPUsqBMuA1NuWxGhXL44zrY1kC8xuRZAUKVUjbcqVOapDb7UhrMOuriN1iL2slm1u5ADytZBWwiLitZBKpWFqxnwOSjzje7ZBUH6cMVsRdLuNCZClwZDZD"
       }
     }
   ],

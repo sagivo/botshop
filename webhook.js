@@ -1,26 +1,34 @@
 'use strict';
+const fs = require('fs');
 const mongo = require('then-mongo');
 const express = require('express');
 const request = require('request');
+const csv = require('fast-csv');
 const db = mongo('mongodb://127.0.0.1/botshop', ['user', 'item']);
+const ObjectId = db.ObjectId;
 const app = module.exports = express();
 
-db.user.ensureIndex({user_id: 1, app_id: 1}, {unique: true});
-db.item.ensureIndex({category: 1});
 
 function price(user){
-    return user.cart && user.cart.reduce((price, item)=>price+item.price*item.quantity, 0) || 0;
+    return user && user.cart && user.cart.reduce((price, item)=>price+item.price*item.quantity, 0) || 0;
 }
 
 app.get('/checkout/:user_id', (req, res, next)=>{
-    db.user.findOne({_id: req.params.user_id}).then(user=>{
+    db.user.findOne({_id: new ObjectId(req.params.user_id)}).then(user=>{
         if (!user && 0)
             return res.send('session expired');
-        res.render('checkout');
+        res.render('checkout', {price: price(user)});
     }).catch(next);
 });
 
 app.post('/checkout/:user_id', (req, res, next)=>{
+    db.user.findOne({_id: new ObjectId(req.params.user_id)}).then(user=>{
+        if (!user && 0)
+            return res.send('session expired');
+        //req.body.stripeTokenType;
+        //req.body.stripeEmail;
+        db.user.remove({_id: user._id}).then(()=>res.render('checkout', {price: 0}));
+    }).catch(next);
 });
 
 app.all('/:app_id', (req, res, next)=>{
@@ -43,7 +51,8 @@ app.all('/:app_id', (req, res, next)=>{
                                 image_url: el.image,
                                 buttons: el.buttons.map(btn=>{
                                     return {
-                                        type: 'postback',
+                                        type: btn.url ? 'web_url' : 'postback',
+                                        url: btn.url,
                                         title: btn.title,
                                         payload: btn.payload,
                                     };
@@ -64,7 +73,8 @@ app.all('/:app_id', (req, res, next)=>{
                             text: opt.text,
                             buttons: opt.buttons.map(btn=>{
                                 return {
-                                    type: 'postback',
+                                    type: btn.url ? 'web_url' : 'postback',
+                                    url: btn.url,
                                     title: btn.title,
                                     payload: btn.payload,
                                 };
@@ -84,6 +94,7 @@ app.all('/:app_id', (req, res, next)=>{
                 }, (err, res)=>{
                     if (err)
                         return reject(err);
+                    console.log(res.body);
                     resolve();
                 });
             });
@@ -96,17 +107,19 @@ app.all('/:app_id', (req, res, next)=>{
         }).then(user=>{
             if (message.message)
             {
-                const text = message.message.text;
-                if (!user.cart)
+                let text = message.message.text;
+                if (!user.cart || (text||'').match(/order/i))
                 {
                     return db.user.findAndModify({
                         query: {_id: user._id},
                         update: {$set: {cart: []}},
                         new: true,
                     }).then(user=>{
-                        send({text: 'Welome to our delivery system, please enter your address to continue...'});
+                        send({text: 'Welome to our delivery system, please send your location to continue...'});
                     });
                 }
+                if (message.message.attachments)
+                    text = message.message.attachments[0].title;
                 return db.user.findAndModify({
                     query: {_id: user._id},
                     update: {$set: {address: text}},
@@ -125,7 +138,7 @@ app.all('/:app_id', (req, res, next)=>{
                     }).catch(err=>console.log(err));
                 });
             }
-            if (message.postback)
+            else if (message.postback)
             {
                 const payload = message.postback.payload.split('.');
                 switch (payload[0])
@@ -134,7 +147,7 @@ app.all('/:app_id', (req, res, next)=>{
                     return db.item.find({category: payload[1]}).sort({title: 1}).then(items=>{
                         send({elements: items.map(item=>{
                             return {
-                                title: item.title,
+                                title: `${item.title} - $${item.price}`,
                                 subtitle: item.description,
                                 image: item.image,
                                 buttons: [{
@@ -145,11 +158,11 @@ app.all('/:app_id', (req, res, next)=>{
                         })});
                     });
                 case 'add':
-                    return db.item.findOne({_id: payload[1]}).then(item=>{
+                    return db.item.findOne({_id: new ObjectId(payload[1])}).then(item=>{
                         if (!item)
                             return console.log(`item ${payload[1]} not found`);
                         return db.user.findAndModify({
-                            query: {_id: user._id, 'cart._id': payload[1]},
+                            query: {_id: user._id, 'cart._id': new ObjectId(payload[1])},
                             update: {$inc: {'cart.$.quantity': 1}},
                             new: true,
                         }).then(_user=>{
@@ -187,15 +200,15 @@ app.all('/:app_id', (req, res, next)=>{
                         };
                     })}).then(()=>{
                         send({
-                            text: `Total: $${price(user)}\nAddress: ${user.address}`,
+                            text: `Total: $${price(user).toFixed(2)}\nAddress: ${user.address}`,
                             buttons: [{
                                 title: 'Checkout',
-                                payload: 'checkout',
+                                url: `${req.protocol}://${req.get('Host')}/webhook/checkout/${user._id}`,
                             }],
                         });
                     });
                 case 'remove':
-                    return db.item.findOne({_id: payload[1]}).then(item=>{
+                    return db.item.findOne({_id: new ObjectId(payload[1])}).then(item=>{
                         if (!item)
                             return console.log(`item ${payload[1]} not found`);
                         return db.user.findAndModify({
@@ -221,9 +234,30 @@ app.all('/:app_id', (req, res, next)=>{
     }))
 });
 
-db.item.insert([
-    {_id: 'coke', title: 'Coke', category: 'Drinks', price: 2},
-    {_id: 'pepsi', title: 'Pepsi', category: 'Drinks', price: 1},
-    {_id: 'burger', title: 'Burger', category: 'Meals', price: 5},
-]);
+function convert_case(str){
+  return str.toLowerCase().replace(/(^| )(\w)/g, x=>x.toUpperCase());
+}
+
+Promise.all([
+    db.user.ensureIndex({user_id: 1, app_id: 1}, {unique: true}),
+    db.item.ensureIndex({category: 1}),
+]).then(()=>{
+    return db.item.count();
+}).then(count=>{
+    if (count)
+        return;
+    const items = [];
+    return new Promise((resolve, reject)=>{
+        csv.fromPath('./items.csv', {headers : true}).validate(item=>{
+            return item.category && item.title && item.description && item.image && +item.price;
+        }).on('data', item=>{
+            item.category = convert_case(item.category);
+            item.price = +item.price;
+            items.push(item);
+        }).on('end', ()=>{
+            db.item.insert(items).then(resolve);
+        });
+    });
+}).catch(err=>console.log(err));
+
 

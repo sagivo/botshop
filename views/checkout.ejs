@@ -3,18 +3,32 @@
   <head>
     <title>BotShop</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
   </head>
   <body>
-    <form action="" method="POST">
-      <script class="stripe-button"
-              data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
-              data-amount="999"
-              data-name="BotShop"
-              data-description="Your order"
-              data-locale="auto"
-              src="https://checkout.stripe.com/checkout.js"
-              >
-      </script>
-    </form>
+    <table style="width: 100%; height: 100%; position: absolute;">
+      <tr>
+        <td style="text-align: center;">
+          <% if (price) { %>
+          <form method="POST">
+            <script class="stripe-button"
+                    data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
+                    data-email="admin@botshop.online"
+                    data-amount="<%=price*100%>"
+                    data-name="BotShop"
+                    data-description="Your order"
+                    data-locale="auto"
+                    data-panel="Secure Checkout"
+                    src="https://checkout.stripe.com/checkout.js"
+                    >
+            </script>
+          </form>
+          <% } else { %>
+          <div><i class="fa fa-check-circle" aria-hidden="true" style="color: green; font-size: 5em;"></i></div>
+          <div style="font-family: Verdana; font-size: 1.5em; padding-top: 1em;">Thank you for your order</div>
+          <% } %>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

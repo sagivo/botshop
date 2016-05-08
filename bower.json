@@ -1,0 +1,18 @@
+{
+  "name": "botshop",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Gilad Novik <gilad@novik.ca>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/sagivo/botshop",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "./bower_components",
+    "test",
+    "tests"
+  ]
+}
