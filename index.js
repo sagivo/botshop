@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({extended: true}));
 app.use((req, res, next)=>{
-    console.log(req.method, req.url, JSON.stringify(req.body, null, 4));
+    if (0) console.log(req.method, req.url, JSON.stringify(req.body, null, 4));
     next();
 });
 app.use('/webhook', (req, res, next)=>{
