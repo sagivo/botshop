@@ -4,7 +4,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title></title>
   <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
-  <link href="../../content/Office.css" rel="stylesheet" type="text/css" />
   <link href="../../bower_components/microsoft.office.js/styles/OfficeThemes.css" rel="stylesheet" type="text/css" />
   <link href="//appsforoffice.microsoft.com/fabric/1.0/fabric.min.css" rel="stylesheet">
   <!--<link href="//appsforoffice.microsoft.com/fabric/1.0/fabric.components.min.css" rel="stylesheet">-->
@@ -17,6 +16,9 @@
   <!-- <script src="../../content/fabric.components.min.css"></script>  -->
   <!-- <script src="../../scripts/jquery.fabric.min.js"></script>  -->
   
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-pink.min.css">
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 
   <script src="../../scripts/MicrosoftAjax.js"></script>
 
@@ -35,19 +37,39 @@
   </div>
   <div id="content-main">
     <div class="padding">
+
+      <form action="#">
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="sample3">
+          <label class="mdl-textfield__label" for="sample3">Store name...</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="sample3">
+          <label class="mdl-textfield__label" for="sample3">Facebook API token...</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="sample3">
+          <label class="mdl-textfield__label" for="sample3">Notifications phone number...</label>
+        </div>
+
+      </form>
+
       <h3>Store name</h3>
-      <input type="text">My sweat shop</input>
+      <input type="text" value="My sweat shop" />
 
       <h3>Facebook API Token</h3>
       <input type="text"></input>
       <h3>Select items range</h3>
       <div>
-        <p class="select-range"><button id="setCategory">Choose</button><span class="hdn">H:H</span></p>
+        <p class="select-range"><button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="setCategory">Select</button><span class="hdn">H:H</span></p>
       </div>
       <p id="sync">
-        <button disabled>Sync</button> <span class="hdn">Done!</span>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" disabled>Update</button> <span class="hdn">Done!</span>
       </p>
-      
+
 
       <p>
         <a href="show.html">preview...</a>
