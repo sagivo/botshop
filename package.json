@@ -42,7 +42,7 @@
       "ref": "origin/master",
       "repo": "https://github.com/sagivo/botshop.git",
       "path": "/home/ubuntu/production",
-      "post-deploy": "npm install && pm2 startOrRestart package.json --env production"
+      "post-deploy": "npm install && bower install && pm2 startOrRestart package.json --env production"
     }
   }
 }
